@@ -23,7 +23,6 @@ namespace MyImageLibTests
 		}
 
 		[Test]
-		[Ignore("")]
 		public void ConvertArray_StandardInput()
 		{
 			Arr[0] = 2;
