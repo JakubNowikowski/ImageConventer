@@ -69,6 +69,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Services\FileDialogService.cs" />
+    <Compile Include="Services\IFileService.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\ImageConverter.cs" />
     <Compile Include="ViewModels\ObservableObject.cs" />

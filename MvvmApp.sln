@@ -7,14 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmApp", "MvvmApp\MvvmApp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyImageLib", "ClassLibrary1\ClassLibrary1\MyImageLib.csproj", "{8A44CF6C-2902-4684-86D8-06DE96DD12D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmAppTests", "MvvmAppTests\MvvmAppTests.csproj", "{77457901-C0A8-4C3F-A755-0ED74DF9449D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EC9FC858-5A11-4887-8C4D-7FD69DDD69A1}"
 	ProjectSection(SolutionItems) = preProject
 		TestSettings1.testsettings = TestSettings1.testsettings
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyImageLibTests", "MyImageLibTests\MyImageLibTests.csproj", "{3EF4E1A4-EB9D-4D34-8A8E-2850C0371B17}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmAppTests", "AppTests\MvvmAppTests.csproj", "{DC6EBA7A-F6C6-421A-9395-7DA3136BC214}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyImageLibTests", "MyImageLibTest\MyImageLibTests.csproj", "{B6E31609-B651-4102-9F35-86ED4F337A46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,14 +30,14 @@ Global
 		{8A44CF6C-2902-4684-86D8-06DE96DD12D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A44CF6C-2902-4684-86D8-06DE96DD12D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A44CF6C-2902-4684-86D8-06DE96DD12D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{77457901-C0A8-4C3F-A755-0ED74DF9449D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{77457901-C0A8-4C3F-A755-0ED74DF9449D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{77457901-C0A8-4C3F-A755-0ED74DF9449D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{77457901-C0A8-4C3F-A755-0ED74DF9449D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3EF4E1A4-EB9D-4D34-8A8E-2850C0371B17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3EF4E1A4-EB9D-4D34-8A8E-2850C0371B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3EF4E1A4-EB9D-4D34-8A8E-2850C0371B17}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3EF4E1A4-EB9D-4D34-8A8E-2850C0371B17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC6EBA7A-F6C6-421A-9395-7DA3136BC214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC6EBA7A-F6C6-421A-9395-7DA3136BC214}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC6EBA7A-F6C6-421A-9395-7DA3136BC214}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC6EBA7A-F6C6-421A-9395-7DA3136BC214}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6E31609-B651-4102-9F35-86ED4F337A46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6E31609-B651-4102-9F35-86ED4F337A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6E31609-B651-4102-9F35-86ED4F337A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6E31609-B651-4102-9F35-86ED4F337A46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
