@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -97,7 +98,6 @@ namespace MyImageLib
 			{
 				int i = 0;
 				int lemgth = OrgArr.Length;
-
 				while (i < OrgArr.Length)
 				{
 					int B = OrgArr[i];
