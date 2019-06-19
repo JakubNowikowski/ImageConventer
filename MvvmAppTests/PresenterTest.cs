@@ -10,55 +10,69 @@ using MyImageLib;
 
 namespace MvvmAppTests
 {
-	[TestFixture]
-	public class PresenterTest
-	{
-		Presenter presenter;
+    [TestFixture]
+    public class PresenterTest
+    {
+        Presenter presenter;
 
-		[SetUp]
-		public void SetUp()
-		{
-			presenter = new Presenter();
-		}
+        [SetUp]
+        public void SetUp()
+        {
+            presenter = new Presenter();
+            //presenter.NewImage = new WriteableBitmap(1, 1, 96, 96, PixelFormats.Bgr32, null);
+        }
 
-		[Test]
-		public void ClearLabels_StandardInput()
-		{
-			presenter.NewImageLabel = "SomeText";
-			presenter.OrgImageLabel = "SomeText";
-			presenter.ConvertingTimeLabel = "SomeText";
-			presenter.ClearLabels();
-			Assert.IsNull(presenter.NewImageLabel, presenter.OrgImageLabel, presenter.ConvertingTimeLabel);
-		}
+        [Test]
+        public void ShowLabels_ProperResultTime()
+        {
+            //Arrange
+            presenter.NewImageLabel = null;
+            presenter.ConvertingTimeLabel = null;
+            int resultTime = 10;
+            var result1 = "Converted image:";
+            var result2 = "Converting time: " + resultTime + " ms";
 
-		[Test]
-		public void ProcTime_StandardInput()
-		{
-			int result = presenter.ProcTime(2, 4);
-			Assert.AreEqual(result, 2);
-		}
+            //Act
+            presenter.ShowLabels(resultTime);
 
-		[Test]
-		public void ProcImage_Null()
-		{
+            //Assert
+            Assert.AreEqual(result1, presenter.NewImageLabel);
+            Assert.AreEqual(result2, presenter.ConvertingTimeLabel);
+        }
 
-			//presenter.OrgImage = null;
-			presenter.OrgFilePath = "error";
-			//presenter.ProcImage();
+        [Ignore("")]
+        [Test]
+        public void ClearImagesTest()
+        {
+            //Arrange
+            presenter.OrgImage = new BitmapImage();
+            presenter.NewImage = new WriteableBitmap(100, 100, 96, 96, PixelFormats.Bgr32, null);
 
-			Assert.IsNotNull(presenter.OrgFilePath);
-		}
+            //Act
+            presenter.ClearImages();
 
-		[Test]
-		public void OpenFileDialogTest()
-		{
-			//Mock<ImageProcessing> imgProc = new Mock<ImageProcessing>();
+            //Assert
+            Assert.IsNull(presenter.OrgImage);
+            Assert.AreEqual(null, presenter.NewImage);
+        }
 
-			//imgProc.Setup(x => x.OpenDialog()).Returns(true);
+        [Test]
+        public void ClearLabelsTest()
+        {
+            //Arrange
+            presenter.ConvertingTimeLabel = "some text";
+            presenter.NewImageLabel = "some text";
+            presenter.OrgImageLabel = "some text";
 
-			//bool IsInserted = presenter.OpenFileDialog(imgProc.Object);
+            //Act
+            presenter.ClearLabels();
 
-			//Assert.AreEqual(IsInserted, true);
-		}
-	}
+            //Assert
+            Assert.IsNull(presenter.ConvertingTimeLabel);
+            Assert.IsNull(presenter.NewImageLabel);
+            Assert.IsNull(presenter.OrgImageLabel);
+        }
+
+
+    }
 }

@@ -30,7 +30,7 @@ namespace MyImageLibTests
 			Arr[2] = 0;
 			Arr[3] = 0;
 
-			imgProc.ConvertArray(Arr);
+			imgProc.ToMainColors(Arr);
 
 			Assert.AreEqual(Arr[0], 255);
 		}
@@ -43,7 +43,7 @@ namespace MyImageLibTests
 			Arr[2] = 0;
 			Arr[3] = 0;
 
-			imgProc.ConvertArray(Arr);
+			imgProc.ToMainColors(Arr);
 
 			Assert.That(Arr, Has.Exactly(4).EqualTo(0));
 		}
@@ -56,7 +56,7 @@ namespace MyImageLibTests
 			Arr[2] = 255;
 			Arr[3] = 255;
 
-			imgProc.ConvertArray(Arr);
+			imgProc.ToMainColors(Arr);
 
 			Assert.That(Arr, Has.Exactly(4).EqualTo(255));
 		}

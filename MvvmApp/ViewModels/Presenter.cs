@@ -10,6 +10,8 @@ using System.IO;
 using System.Windows.Data;
 using MvvmApp.Services;
 using System.Windows.Forms;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace MvvmApp.ViewModels
 {
@@ -18,10 +20,6 @@ namespace MvvmApp.ViewModels
     {
         ImageProcessing imgProc = new ImageProcessing();
         FileDialogService fileDialogService = new FileDialogService();
-        OpenFileDialog opDlg = new OpenFileDialog();
-        DialogResult dialogResult;
-
-        int start, stop;
         byte[] OrgByteArray;
 
         #region Properties
@@ -93,14 +91,43 @@ namespace MvvmApp.ViewModels
         }
 
         private string _errorLabel;
+
         public string ErrorLabel
         {
             get { return _errorLabel; }
             set
             {
                 _errorLabel = value;
-                RaisePropertyChangedEvent("ErrorLabel");
+                //RaisePropertyChangedEvent("ErrorLabel");
             }
+        }
+
+        private bool _isConvertEnabled;
+        public bool IsConvertEnabled
+        {
+            get { return _isConvertEnabled; }
+            set
+            {
+                _isConvertEnabled = value;
+                RaisePropertyChangedEvent("IsConvertEnabled");
+            }
+        }
+
+        private bool _isSaveEnabled;
+        public bool IsSaveEnabled
+        {
+            get { return _isSaveEnabled; }
+            set
+            {
+                _isSaveEnabled = value;
+                RaisePropertyChangedEvent("IsSaveEnabled");
+            }
+        }
+
+        private void OnPropertyChanged<T>(Expression<Func<T>> expression)
+        {
+            var name = (expression.Body as MemberExpression).Member.Name;
+            RaisePropertyChangedEvent(name);
         }
 
         public ICommand LoadImage
@@ -121,22 +148,32 @@ namespace MvvmApp.ViewModels
 
         public void Load()
         {
-            ClearLabels();
-            ClearImages();
-            //OpenFileDialog();
-            dialogResult = fileDialogService.OpenDialog(opDlg, dialogResult);
-
-            if (dialogResult == DialogResult.OK)
+            ErrorLabel = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+            OnPropertyChanged(() => ErrorLabel);
+            ClearAll();
+            if (fileDialogService.TryOpenDialog(out var filePath))
             {
-                OrgFilePath = fileDialogService.GetSelectedFilePath(opDlg);
-                OrgImage = new BitmapImage(new Uri(OrgFilePath, UriKind.RelativeOrAbsolute));
-                OrgImageLabel = "Original image:";
+                OrgFilePath = filePath;
+                OpenImage(OrgFilePath);
+                IsConvertEnabled = true;
+            }
+            else
+            {
+                IsConvertEnabled = false;
+                IsSaveEnabled = false;
             }
         }
 
-        public void OpenFileDialog()
+        private void OpenImage(string filePath)
         {
-            //OrgFilePath = fileDialogService.OpenDialog(opDlg);
+            OrgImage = new BitmapImage(new Uri(filePath, UriKind.RelativeOrAbsolute));
+            OrgImageLabel = "Original image:";
+        }
+
+        private void ClearAll()
+        {
+            ClearLabels();
+            ClearImages();
         }
 
         public void ClearLabels()
@@ -144,7 +181,6 @@ namespace MvvmApp.ViewModels
             ConvertingTimeLabel = null;
             NewImageLabel = null;
             OrgImageLabel = null;
-            ErrorLabel = null;
         }
 
         public void ClearImages()
@@ -153,37 +189,43 @@ namespace MvvmApp.ViewModels
             NewImage = null;
         }
 
-        public int ProcTime(int start, int stop)
-        {
-            return (stop - start);
-        }
-
         public void Convert()
         {
+            if (OrgImage == null)
+                return;
+            int startTime, endTime, resultTime;
+            startTime = endTime = resultTime = 0;
 
-            if (OrgImage != null && OrgFilePath != "error")
-            {
-                start = Environment.TickCount & Int32.MaxValue;
+            startTime = CheckTime();
 
-                OrgByteArray = imgProc.ImageToByteArray(OrgImage);
+            //OrgByteArray = imgProc.ConvertImageToByteArray(OrgImage);
+            //imgProc.ConvertArray(OrgByteArray);
+            //NewImage = imgProc.ToMainColors(OrgByteArray, OrgImage.PixelWidth, OrgImage.PixelHeight);
 
-                imgProc.ConvertArray(OrgByteArray);
+            NewImage = imgProc.CreateNewConvertedImage(OrgImage);
 
-                NewImage = imgProc.ToMainColors(OrgByteArray, OrgImage.PixelWidth, OrgImage.PixelHeight);
+            endTime = CheckTime();
+            resultTime = endTime - startTime;
+            IsSaveEnabled = true;
+            ShowLabels(resultTime);
+        }
 
-                stop = Environment.TickCount & Int32.MaxValue;
-                NewImageLabel = "Converted image:";
-                ConvertingTimeLabel = "Converting time: " + ProcTime(start, stop) + " ms";
-            }
-            else
-                ErrorLabel = "Error: You must (wczytaj obraz)"; // todo enable convert button if image is't loaded
+        public void ShowLabels(int resultTime)
+        {
+            NewImageLabel = "Converted image:";
+            ConvertingTimeLabel = "Converting time: " + resultTime + " ms";
+        }
 
+        private int CheckTime()
+        {
+            return Environment.TickCount & Int32.MaxValue;
         }
 
         public void SaveAs()
         {
-            if (NewImage != null)
-                fileDialogService.SaveDialog(NewImage, OrgFilePath);
+            if (NewImage == null)
+                return;
+            fileDialogService.SaveDialog(NewImage, OrgFilePath);
         }
     }
 }
