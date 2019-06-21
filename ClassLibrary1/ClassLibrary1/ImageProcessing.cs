@@ -17,7 +17,6 @@ namespace MyImageLib
             int width = loadImage.PixelWidth;
             int nStride = loadImage.PixelWidth * 4;
             byte[] loadImageByteArr;
-            byte[] newImageByteArr;
             WriteableBitmap writeImg;
             Int32Rect rect;
             var dpix = loadImage.DpiX;
@@ -82,7 +81,7 @@ namespace MyImageLib
         //    return OrgArr;
         //}
 
-        public async Task<byte[]> ConvertAsync(byte[] orgArr) // assume we return an int from this long running operation 
+        public async Task<byte[]> ConvertAsync(byte[] orgArr)
         {
             return await Task.Run(() =>
             {

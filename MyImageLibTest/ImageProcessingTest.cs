@@ -1,7 +1,14 @@
+using Moq;
 using MyImageLib;
 using NUnit.Framework;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace MyImageLibTests
 {
@@ -11,9 +18,43 @@ namespace MyImageLibTests
         ImageProcessing imgProc;
         byte[] arr;
 
+        int width = 1;
+        int height = 1;
+        Int32Rect rect;
+        double a = 1;
+        double b = 1;
+        BitmapImage bitmapImage;
+        WriteableBitmap newImage;
+
         ref byte blue => ref arr[0];
         ref byte green => ref arr[1];
         ref byte red => ref arr[2];
+
+        #region Helpers
+
+        private BitmapImage CreateBitmapImage(Color color, ImageFormat format)
+        {
+            Bitmap bitmap = new Bitmap(1, 1);
+            Graphics g = Graphics.FromImage(bitmap);
+            g.Clear(color);
+
+            using (var memory = new MemoryStream())
+            {
+                bitmap.Save(memory, format);
+                memory.Position = 0;
+
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                return bitmapImage;
+            }
+        }
+
+        #endregion
 
         [SetUp]
         public void SetUp()
@@ -99,20 +140,98 @@ namespace MyImageLibTests
 
         #region ConvertImageToByteArray Tests
 
-        [Ignore("")]
         [Test]
-        public void ConvertImageToByteArray_ProperInput()
+        public void ConvertImageToByteArray_PngFormat()
         {
-            BitmapImage image = new BitmapImage();
+            bitmapImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Png);
 
-            image.BeginInit();
-            image.DecodePixelHeight = 5;
-            image.DecodePixelWidth = 5;
-            image.EndInit();
+            arr = imgProc.ConvertImageToByteArray(bitmapImage);
 
-            imgProc.ConvertImageToByteArray(image);
+            Assert.That(arr, Has.Some.GreaterThan(0));
+        }
 
-            Assert.AreEqual(4, image.Height);
+        [Test]
+        public void ConvertImageToByteArray_JpegFormat()
+        {
+            bitmapImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Jpeg);
+
+            arr = imgProc.ConvertImageToByteArray(bitmapImage);
+
+            Assert.That(arr, Has.Some.GreaterThan(0));
+        }
+
+        [Test]
+        public void ConvertImageToByteArray_BmpFormat()
+        {
+            bitmapImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Bmp);
+
+            arr = imgProc.ConvertImageToByteArray(bitmapImage);
+
+            Assert.That(arr, Has.Some.GreaterThan(0));
+        }
+
+        [Test]
+        public void ConvertImageToByteArray_WhiteColor_AllElementsAreEqualTo255()
+        {
+            bitmapImage = CreateBitmapImage(Color.White, ImageFormat.Bmp);
+
+            arr = imgProc.ConvertImageToByteArray(bitmapImage);
+
+            Assert.That(arr, Has.Exactly(4).EqualTo(255));
+        }
+
+        [Test]
+        public void ConvertImageToByteArray_BlackColor_ThreeElementsAreEqualTo0()
+        {
+            bitmapImage = CreateBitmapImage(Color.Black, ImageFormat.Bmp);
+
+            arr = imgProc.ConvertImageToByteArray(bitmapImage);
+
+            Assert.That(arr, Has.Exactly(3).EqualTo(0));
+        }
+
+        #endregion
+
+        #region CreateNewEmptyImage
+
+        [Test]
+        public void CreateNewEmptyImage_ProperInput_NewImageIsNotNull()
+        {
+            newImage = null;
+
+            newImage = imgProc.CreateNewEmptyImage(width, height, out rect, a, b);
+
+            Assert.That(newImage, Is.Not.Null);
+        }
+
+        [Test]
+        public void CreateNewEmptyImage_ProperInput_RectIsNotEmpty()
+        {
+            rect = new Int32Rect();
+
+            newImage = imgProc.CreateNewEmptyImage(width, height, out rect, a, b);
+
+            Assert.That(rect.IsEmpty, Is.False);
+        }
+
+        #endregion
+
+        #region CreateNewConvertedImage
+
+        [Ignore("Problem with mocking async method")]
+        [Test]
+        public async Task CreateNewConvertedImage()
+        {
+            Mock<IProcessing> processingMock = new Mock<IProcessing>();
+            //processingMock.Setup(m => m.CreateNewConvertedImage(presenter.OrgImage)).Returns(Task.FromResult(newImage));
+            processingMock.Setup(m => m.ConvertAsync(arr)).Returns(Task.FromResult(arr));
+
+            newImage = null;
+            bitmapImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Bmp);
+
+            newImage = await imgProc.CreateNewConvertedImage(bitmapImage);
+
+            Assert.That(newImage, Is.Not.Null);
         }
 
         #endregion

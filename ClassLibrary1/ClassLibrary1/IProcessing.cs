@@ -10,5 +10,6 @@ namespace MyImageLib
     public interface IProcessing
     {
         Task<WriteableBitmap> CreateNewConvertedImage(BitmapImage loadImage);
+        Task<byte[]> ConvertAsync(byte[] orgArr);
     }
 }
