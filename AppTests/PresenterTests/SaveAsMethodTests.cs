@@ -1,30 +1,28 @@
-﻿using System;
-using MvvmApp.ViewModels;
+﻿using MvvmApp.ViewModels;
 using NUnit.Framework;
-using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Input;
 using Moq;
-using MyImageLib;
 using MvvmApp.Services;
+using MyImageLib;
 
 namespace AppTests
 {
-	[TestFixture]
-	public class SaveAsMethodTests
-	{
-		Presenter presenter;
-		string filePath;
+    [TestFixture]
+    public class SaveAsMethodTests
+    {
+        Presenter presenter;
+        string filePath;
         ImageSource image;
-		Mock<IFileService> fileServiceMock;
+        Mock<IFileService> fileServiceMock;
+        Mock<IProcessing> processingMock;
 
-	[SetUp]
-		public void SetUp()
-		{
-			presenter = new Presenter();
-			fileServiceMock = new Mock<IFileService>();
-			presenter.FileServicePropMyProperty = fileServiceMock.Object;
+        [SetUp]
+        public void SetUp()
+        {
+            fileServiceMock = new Mock<IFileService>();
+            processingMock = new Mock<IProcessing>();
+            presenter = new Presenter(fileServiceMock.Object, processingMock.Object);
             filePath = "some Path";
             image = new WriteableBitmap(1, 1, 96, 96, PixelFormats.Bgr32, null);
             fileServiceMock.Setup(m => m.SaveDialog(image, filePath));
@@ -37,17 +35,18 @@ namespace AppTests
 
             presenter.SaveAs();
 
-            fileServiceMock.Verify(m => m.SaveDialog(presenter.NewImage, filePath),Times.Never());
+            fileServiceMock.Verify(m => m.SaveDialog(presenter.NewImage, filePath), Times.Never());
         }
 
         [Test]
         public void SaveAs_NewImageIsValid_SaveDialogIsCalled()
         {
-            presenter.NewImage = new WriteableBitmap(1, 1, 96, 96, PixelFormats.Bgr32, null);
+            presenter.NewImage = image;
+            presenter.OrgFilePath = filePath;
 
             presenter.SaveAs();
 
-            fileServiceMock.Verify(m => m.SaveDialog(presenter.NewImage, filePath), Times.Once());
+            fileServiceMock.Verify(m => m.SaveDialog(presenter.NewImage, presenter.OrgFilePath), Times.Once());
         }
     }
 }

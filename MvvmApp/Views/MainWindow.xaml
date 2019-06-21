@@ -7,10 +7,6 @@
         mc:Ignorable="d"
         Height="450" Width="800" Background="White">
 
-    <Window.DataContext>
-        <local:Presenter/>
-    </Window.DataContext>
-
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>

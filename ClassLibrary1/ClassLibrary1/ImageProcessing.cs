@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 
 namespace MyImageLib
 {
-    public class ImageProcessing
+    public class ImageProcessing : IProcessing
     {
         public async Task<WriteableBitmap> CreateNewConvertedImage(BitmapImage loadImage)
         {
@@ -20,8 +20,8 @@ namespace MyImageLib
             byte[] newImageByteArr;
             WriteableBitmap writeImg;
             Int32Rect rect;
-			var dpix = loadImage.DpiX;
-			var dpiy = loadImage.DpiY;
+            var dpix = loadImage.DpiX;
+            var dpiy = loadImage.DpiY;
             loadImageByteArr = ConvertImageToByteArray(loadImage);
             writeImg = CreateNewEmptyImage(width, height, out rect, dpix, dpiy);
             writeImg.WritePixels(rect, await ConvertAsync(loadImageByteArr), nStride, 0);
@@ -35,16 +35,6 @@ namespace MyImageLib
             return emptyImg;
         }
 
-        //public WriteableBitmap ToMainColorsOldVer(byte[] pixelOrgArr, int imageWidth, int imageHeight)
-        //{
-        //    int nStride = imageWidth * 4;
-        //    pixelOrgArr = ConvertAsync(pixelOrgArr);
-        //    WriteableBitmap writeImg = new WriteableBitmap(imageWidth, imageHeight, 96, 96, PixelFormats.Bgr32, null);
-        //    Int32Rect rect = new Int32Rect(0, 0, imageWidth, imageHeight);
-        //    writeImg.WritePixels(rect, pixelOrgArr, nStride, 0);
-        //    return writeImg;
-        //}
-
         public byte[] ConvertImageToByteArray(BitmapImage loadImg)
         {
             int height = loadImg.PixelHeight;
@@ -56,79 +46,76 @@ namespace MyImageLib
             return pixelOrgArr;
         }
 
-		//public byte[] ToMainColors(byte[] OrgArr)
-		//{
-		//    int i = 0;
+        //public byte[] ToMainColors(byte[] OrgArr)
+        //{
+        //    int i = 0;
 
-		//    while (i < OrgArr.Length)
-		//    {
-		//        int B = OrgArr[i];
-		//        int G = OrgArr[i + 1];
-		//        int R = OrgArr[i + 2];
+        //    while (i < OrgArr.Length)
+        //    {
+        //        int B = OrgArr[i];
+        //        int G = OrgArr[i + 1];
+        //        int R = OrgArr[i + 2];
 
-		//        if (B > G & B > R)
-		//        {
-		//            OrgArr[i] = 255;
-		//            OrgArr[i + 1] = 0;
-		//            OrgArr[i + 2] = 0;
-		//            OrgArr[i + 3] = 255;
-		//        }
-		//        else if (G > B & G > R)
-		//        {
-		//            OrgArr[i] = 0;
-		//            OrgArr[i + 1] = 255;
-		//            OrgArr[i + 2] = 0;
-		//            OrgArr[i + 3] = 255;
-		//        }
-		//        else if (R > B & R > G)
-		//        {
-		//            OrgArr[i] = 0;
-		//            OrgArr[i + 1] = 0;
-		//            OrgArr[i + 2] = 255;
-		//            OrgArr[i + 3] = 255;
-		//        }
-		//        i += 4;
-		//    }
-		//    return OrgArr;
-		//}
+        //        if (B > G & B > R)
+        //        {
+        //            OrgArr[i] = 255;
+        //            OrgArr[i + 1] = 0;
+        //            OrgArr[i + 2] = 0;
+        //            OrgArr[i + 3] = 255;
+        //        }
+        //        else if (G > B & G > R)
+        //        {
+        //            OrgArr[i] = 0;
+        //            OrgArr[i + 1] = 255;
+        //            OrgArr[i + 2] = 0;
+        //            OrgArr[i + 3] = 255;
+        //        }
+        //        else if (R > B & R > G)
+        //        {
+        //            OrgArr[i] = 0;
+        //            OrgArr[i + 1] = 0;
+        //            OrgArr[i + 2] = 255;
+        //            OrgArr[i + 3] = 255;
+        //        }
+        //        i += 4;
+        //    }
+        //    return OrgArr;
+        //}
 
-		public async Task<byte[]> ConvertAsync(byte[] OrgArr) // assume we return an int from this long running operation 
-		{
-			return await Task.Run(() =>
-			{
-				int i = 0;
-				int lemgth = OrgArr.Length;
-				while (i < OrgArr.Length)
-				{
-					int B = OrgArr[i];
-					int G = OrgArr[i + 1];
-					int R = OrgArr[i + 2];
+        public async Task<byte[]> ConvertAsync(byte[] orgArr) // assume we return an int from this long running operation 
+        {
+            return await Task.Run(() =>
+            {
+                int i = 0;
+                while (i < orgArr.Length)
+                {
+                    int B = orgArr[i];
+                    int G = orgArr[i + 1];
+                    int R = orgArr[i + 2];
+                    orgArr[i + 3] = 255; // 4th byte is always 255
 
-					if (B > G & B > R)
-					{
-						OrgArr[i] = 255;
-						OrgArr[i + 1] = 0;
-						OrgArr[i + 2] = 0;
-						OrgArr[i + 3] = 255;
-					}
-					else if (G > B & G > R)
-					{
-						OrgArr[i] = 0;
-						OrgArr[i + 1] = 255;
-						OrgArr[i + 2] = 0;
-						OrgArr[i + 3] = 255;
-					}
-					else if (R > B & R > G)
-					{
-						OrgArr[i] = 0;
-						OrgArr[i + 1] = 0;
-						OrgArr[i + 2] = 255;
-						OrgArr[i + 3] = 255;
-					}
-					i += 4;
-				}
-				return OrgArr;
-			});
-		}
-	}
+                    if (B > G & B > R)
+                    {
+                        orgArr[i] = 255;
+                        orgArr[i + 1] = 0;
+                        orgArr[i + 2] = 0;
+                    }
+                    else if (G > B & G > R)
+                    {
+                        orgArr[i] = 0;
+                        orgArr[i + 1] = 255;
+                        orgArr[i + 2] = 0;
+                    }
+                    else if (R > B & R > G)
+                    {
+                        orgArr[i] = 0;
+                        orgArr[i + 1] = 0;
+                        orgArr[i + 2] = 255;
+                    }
+                    i += 4;
+                }
+                return orgArr;
+            });
+        }
+    }
 }

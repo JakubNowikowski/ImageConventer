@@ -1,4 +1,8 @@
-﻿namespace MvvmApp.Views
+﻿using MvvmApp.Services;
+using MvvmApp.ViewModels;
+using MyImageLib;
+
+namespace MvvmApp.Views
 {
 	/// <summary>
 	/// Logika interakcji dla klasy MainWindow.xaml
@@ -8,6 +12,7 @@
 		public MainWindow()
 		{
 			InitializeComponent();
+            DataContext = new Presenter(new FileDialogService(),new ImageProcessing());
 		}
 	}
 }

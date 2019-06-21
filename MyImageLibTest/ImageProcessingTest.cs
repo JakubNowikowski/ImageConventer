@@ -1,80 +1,120 @@
-//using System;
-//using MyImageLib;
-//using NUnit.Framework;
-////using System.Collections.Generic;
-////using System.Windows.Media;
-////using System.Windows.Media.Imaging;
-//using System.Windows.Input;
-//using System.Drawing;
+using MyImageLib;
+using NUnit.Framework;
+using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
-//namespace MyImageLibTests
-//{
-//	[TestFixture]
-//	public class ImageProcessingTest
-//	{
-//		ImageProcessing imgProc;
-//		byte[] Arr = new byte[4];
+namespace MyImageLibTests
+{
+    [TestFixture]
+    public class ImageProcessingTest
+    {
+        ImageProcessing imgProc;
+        byte[] arr;
 
+        ref byte blue => ref arr[0];
+        ref byte green => ref arr[1];
+        ref byte red => ref arr[2];
 
-//		[SetUp]
-//		public void SetUp()
-//		{
-//			imgProc = new ImageProcessing();
-//		}
+        [SetUp]
+        public void SetUp()
+        {
+            imgProc = new ImageProcessing();
+            arr = new byte[4];
+        }
 
-//		[Test]
-//		public void ConvertArray_StandardInput()
-//		{
-//			Arr[0] = 2;
-//			Arr[1] = 0;
-//			Arr[2] = 0;
-//			Arr[3] = 0;
+        #region ConvertArray Tests
 
-//			imgProc.ToMainColors(Arr);
+        [Test]
+        public async Task ConvertArray_BlueIsTheBiggest_RetrunMaxBlue()
 
-//			Assert.AreEqual(Arr[0], 255);
-//		}
+        {
+            blue = 2;
+            green = 1;
+            red = 1;
 
-//		[Test]
-//		public void ConvertArray_Zero()
-//		{
-//			Arr[0] = 0;
-//			Arr[1] = 0;
-//			Arr[2] = 0;
-//			Arr[3] = 0;
+            await imgProc.ConvertAsync(arr);
 
-//			imgProc.ToMainColors(Arr);
+            Assert.AreEqual(255, arr[0]);
+        }
 
-//			Assert.That(Arr, Has.Exactly(4).EqualTo(0));
-//		}
+        [Test]
+        public void ConvertArray_GreenIsTheBiggest_RetrunMaxGreen()
+        {
+            blue = 1;
+            green = 2;
+            red = 1;
 
-//		[Test]
-//		public void ConvertArray_MaxValues_255()
-//		{
-//			Arr[0] = 255;
-//			Arr[1] = 255;
-//			Arr[2] = 255;
-//			Arr[3] = 255;
+            var result = imgProc.ConvertAsync(arr).Result;
 
-//			imgProc.ToMainColors(Arr);
+            Assert.AreEqual(255, arr[1]);
+        }
 
-//			Assert.That(Arr, Has.Exactly(4).EqualTo(255));
-//		}
+        [Test]
+        public async Task ConvertArray_RedIsTheBiggest_RetrunMaxRed()
+        {
+            blue = 1;
+            green = 1;
+            red = 2;
 
-//		//[Test]
-//		//public void ToMainColors_StandardInput()
-//		//{
+            await imgProc.ConvertAsync(arr);
 
-//		//	ImageSource img;
-//		//	Arr[0] = 2;
-//		//	Arr[1] = 0;
-//		//	Arr[2] = 0;
-//		//	Arr[3] = 0;
+            Assert.AreEqual(255, arr[2]);
+        }
 
-//		//	img = null;
-//		//	img = imgProc.ToMainColors(Arr, 1, 1);
-//		//	Assert.Null(img);
-//		//}
+        [Test]
+        public async Task ConvertArray_4thByteChanged()
+        {
+            arr[3] = 0;
 
-//	}
-//}
+            await imgProc.ConvertAsync(arr);
+
+            Assert.AreEqual(255, arr[3]);
+        }
+
+        [Test]
+        public async Task ConvertArray_AllColorValuesAreZero_RetrunThreeZeros()
+        {
+            blue = 0;
+            green = 0;
+            red = 0;
+
+            await imgProc.ConvertAsync(arr);
+
+            Assert.That(arr, Has.Exactly(3).EqualTo(0));
+        }
+
+        [Test]
+        public async Task ConvertArray_AllColorValuesAreMax_RetrunAllMax()
+        {
+            blue = 255;
+            green = 255;
+            red = 255;
+
+            await imgProc.ConvertAsync(arr);
+
+            Assert.That(arr, Has.Exactly(4).EqualTo(255));
+        }
+
+        #endregion
+
+        #region ConvertImageToByteArray Tests
+
+        [Ignore("")]
+        [Test]
+        public void ConvertImageToByteArray_ProperInput()
+        {
+            BitmapImage image = new BitmapImage();
+
+            image.BeginInit();
+            image.DecodePixelHeight = 5;
+            image.DecodePixelWidth = 5;
+            image.EndInit();
+
+            imgProc.ConvertImageToByteArray(image);
+
+            Assert.AreEqual(4, image.Height);
+        }
+
+        #endregion
+    }
+}

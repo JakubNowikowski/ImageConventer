@@ -16,226 +16,219 @@ using System.Diagnostics;
 
 namespace MvvmApp.ViewModels
 {
+    public class Presenter : ObservableObject
+    {
+        public string convertedImageDescription = "Converted image:";
+        public string convertedTimeDescription = "Converting time (min/sec/ms): ";
+        public string originalImageDescription = "Original image:";
+        IFileService _fileDialogService;
+        IProcessing _processing;
 
-	public class Presenter : ObservableObject
-	{
-		string convertedImageDescription = "Converted image:";
-		string convertedTimeDescription = "Converting time (min/sec/ms): ";
-		public string originalImageDescription = "Original image:";
-		IFileService _fileDialogService;
+        public Presenter(IFileService fileDialogService, IProcessing processing)
+        {
+            _fileDialogService = fileDialogService;
+            _processing = processing;
+        }
 
-		public Presenter()
-		{
-			_fileDialogService = new FileDialogService();
-		}
+        #region Properties
 
-		#region Properties
+        private BitmapImage _orgImage;
+        public BitmapImage OrgImage
+        {
+            get { return _orgImage; }
+            set
+            {
+                _orgImage = value;
+                RaisePropertyChangedEvent("OrgImage");
+            }
+        }
 
-		public IFileService FileServicePropMyProperty
-		{
-			get { return _fileDialogService; }
-			set { _fileDialogService = value; }
-		}
+        private ImageSource _newImage;
+        public ImageSource NewImage
+        {
+            get { return _newImage; }
+            set
+            {
+                _newImage = value;
+                RaisePropertyChangedEvent("NewImage");
+            }
+        }
 
-		private BitmapImage _orgImage;
-		public BitmapImage OrgImage
-		{
-			get { return _orgImage; }
-			set
-			{
-				_orgImage = value;
-				RaisePropertyChangedEvent("OrgImage");
-			}
-		}
+        private string _orgImageLabel;
+        public string OrgImageLabel
+        {
+            get { return _orgImageLabel; }
+            set
+            {
+                _orgImageLabel = value;
+                RaisePropertyChangedEvent("OrgImageLabel");
+            }
+        }
 
-		private ImageSource _newImage;
-		public ImageSource NewImage
-		{
-			get { return _newImage; }
-			set
-			{
-				_newImage = value;
-				RaisePropertyChangedEvent("NewImage");
-			}
-		}
+        private string _newImageLabel;
+        public string NewImageLabel
+        {
+            get { return _newImageLabel; }
+            set
+            {
+                _newImageLabel = value;
+                RaisePropertyChangedEvent("NewImageLabel");
+            }
+        }
 
-		private string _orgImageLabel;
-		public string OrgImageLabel
-		{
-			get { return _orgImageLabel; }
-			set
-			{
-				_orgImageLabel = value;
-				RaisePropertyChangedEvent("OrgImageLabel");
-			}
-		}
+        private string _orgFilePath;
+        public string OrgFilePath
+        {
+            get { return _orgFilePath; }
+            set
+            {
+                _orgFilePath = value;
+                RaisePropertyChangedEvent("OrgFilePath");
+            }
+        }
 
-		private string _newImageLabel;
-		public string NewImageLabel
-		{
-			get { return _newImageLabel; }
-			set
-			{
-				_newImageLabel = value;
-				RaisePropertyChangedEvent("NewImageLabel");
-			}
-		}
+        private string _convertingTimeLabel;
+        public string ConvertingTimeLabel
+        {
+            get { return _convertingTimeLabel; }
+            set
+            {
+                _convertingTimeLabel = value;
+                RaisePropertyChangedEvent("ConvertingTimeLabel");
+            }
+        }
 
-		private string _orgFilePath;
-		public string OrgFilePath
-		{
-			get { return _orgFilePath; }
-			set
-			{
-				_orgFilePath = value;
-				RaisePropertyChangedEvent("OrgFilePath");
-			}
-		}
+        private string _errorLabel;
 
-		private string _convertingTimeLabel;
-		public string ConvertingTimeLabel
-		{
-			get { return _convertingTimeLabel; }
-			set
-			{
-				_convertingTimeLabel = value;
-				RaisePropertyChangedEvent("ConvertingTimeLabel");
-			}
-		}
+        public string ErrorLabel
+        {
+            get { return _errorLabel; }
+            set
+            {
+                _errorLabel = value;
+                //RaisePropertyChangedEvent("ErrorLabel");
+            }
+        }
 
-		private string _errorLabel;
+        private bool _isConvertEnabled;
+        public bool IsConvertEnabled
+        {
+            get { return _isConvertEnabled; }
+            set
+            {
+                _isConvertEnabled = value;
+                RaisePropertyChangedEvent("IsConvertEnabled");
+            }
+        }
 
-		public string ErrorLabel
-		{
-			get { return _errorLabel; }
-			set
-			{
-				_errorLabel = value;
-				//RaisePropertyChangedEvent("ErrorLabel");
-			}
-		}
+        private bool _isSaveEnabled;
+        public bool IsSaveEnabled
+        {
+            get { return _isSaveEnabled; }
+            set
+            {
+                _isSaveEnabled = value;
+                RaisePropertyChangedEvent("IsSaveEnabled");
+            }
+        }
 
-		private bool _isConvertEnabled;
-		public bool IsConvertEnabled
-		{
-			get { return _isConvertEnabled; }
-			set
-			{
-				_isConvertEnabled = value;
-				RaisePropertyChangedEvent("IsConvertEnabled");
-			}
-		}
+        private void OnPropertyChanged<T>(Expression<Func<T>> expression)
+        {
+            var name = (expression.Body as MemberExpression).Member.Name;
+            RaisePropertyChangedEvent(name);
+        }
 
-		private bool _isSaveEnabled;
+        public ICommand LoadImage
+        {
+            get { return new DelegateCommand(Load); }
+        }
 
-		public bool IsSaveEnabled
-		{
-			get { return _isSaveEnabled; }
-			set
-			{
-				_isSaveEnabled = value;
-				RaisePropertyChangedEvent("IsSaveEnabled");
-			}
-		}
+        public ICommand ConvertImage
+        {
+            get { return new DelegateCommand(async () => await Convert()); }
+        }
 
-		private void OnPropertyChanged<T>(Expression<Func<T>> expression)
-		{
-			var name = (expression.Body as MemberExpression).Member.Name;
-			RaisePropertyChangedEvent(name);
-		}
+        public ICommand SaveImage
+        {
+            get { return new DelegateCommand(SaveAs); }
+        }
+        #endregion
 
-		public ICommand LoadImage
-		{
-			get { return new DelegateCommand(Load); }
-		}
+        public void Load()
+        {
+            //ErrorLabel = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+            //OnPropertyChanged(() => ErrorLabel);
 
-		public ICommand ConvertImage
-		{
-			get { return new DelegateCommand(async () => await Convert()); }
-		}
+            ClearAll();
+            if (_fileDialogService.TryOpenDialog(out var filePath))
+            {
+                OrgFilePath = filePath;
+                OpenImage(OrgFilePath);
+                IsConvertEnabled = true;
+            }
+            else
+            {
+                IsConvertEnabled = false;
+                IsSaveEnabled = false;
+            }
+        }
 
-		public ICommand SaveImage
-		{
-			get { return new DelegateCommand(SaveAs); }
-		}
-		#endregion
+        private void OpenImage(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                throw new ArgumentNullException();
+            OrgImage = new BitmapImage(new Uri(filePath, UriKind.RelativeOrAbsolute));
+            OrgImageLabel = originalImageDescription;
+        }
 
-		public void Load()
-		{
-			//ErrorLabel = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-			//OnPropertyChanged(() => ErrorLabel);
+        private void ClearAll()
+        {
+            ClearLabels();
+            ClearImages();
+        }
 
-			ClearAll();
-			if (FileServicePropMyProperty.TryOpenDialog(out var filePath))
-			{
-				OrgFilePath = filePath;
-				OpenImage(OrgFilePath);
-				IsConvertEnabled = true;
-			}
-			else
-			{
-				IsConvertEnabled = false;
-				IsSaveEnabled = false;
-			}
-		}
+        private void ClearLabels()
+        {
+            ConvertingTimeLabel = null;
+            NewImageLabel = null;
+            OrgImageLabel = null;
+        }
 
-		private void OpenImage(string filePath)
-		{
-			if (string.IsNullOrEmpty(filePath))
-				throw new ArgumentNullException();
-			OrgImage = new BitmapImage(new Uri(filePath, UriKind.RelativeOrAbsolute));
-			OrgImageLabel = originalImageDescription;
-		}
+        private void ClearImages()
+        {
+            OrgImage = null;
+            NewImage = null;
+        }
 
-		private void ClearAll()
-		{
-			ClearLabels();
-			ClearImages();
-		}
+        public async Task Convert()
+        {
+            if (OrgImage == null)
+                return;
 
-		private void ClearLabels()
-		{
-			ConvertingTimeLabel = null;
-			NewImageLabel = null;
-			OrgImageLabel = null;
-		}
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
-		private void ClearImages()
-		{
-			OrgImage = null;
-			NewImage = null;
-		}
+            NewImage = await _processing.CreateNewConvertedImage(OrgImage);
 
-		public async Task Convert()
-		{
-			if (OrgImage == null)
-				return;
+            stopwatch.Stop();
+            TimeSpan ts = stopwatch.Elapsed;
+            ShowLabels(ts);
 
-			ImageProcessing imgProc = new ImageProcessing();
-			Stopwatch stopwatch = new Stopwatch();
-			stopwatch.Start();
+            IsSaveEnabled = true;
+        }
 
-			NewImage = await imgProc.CreateNewConvertedImage(OrgImage);
+        private void ShowLabels(TimeSpan ts)
+        {
+            NewImageLabel = convertedImageDescription;
+            ConvertingTimeLabel = convertedTimeDescription + String.Format("{0:00}:{1:00}:{2:00}",
+            ts.Minutes, ts.Seconds, ts.Milliseconds);
+        }
 
-			stopwatch.Stop();
-			TimeSpan ts = stopwatch.Elapsed;
-			ShowLabels(ts);
-
-			IsSaveEnabled = true;
-		}
-
-		private void ShowLabels(TimeSpan ts)
-		{
-			NewImageLabel = convertedImageDescription;
-			ConvertingTimeLabel = convertedTimeDescription + String.Format("{0:00}:{1:00}:{2:00}",
-			ts.Minutes, ts.Seconds, ts.Milliseconds);
-		}
-
-		public void SaveAs()
-		{
-			if (NewImage == null)
-				return;
-			FileServicePropMyProperty.SaveDialog(NewImage, OrgFilePath);
-		}
-	}
+        public void SaveAs()
+        {
+            if (NewImage == null)
+                return;
+            _fileDialogService.SaveDialog(NewImage, OrgFilePath);
+        }
+    }
 }

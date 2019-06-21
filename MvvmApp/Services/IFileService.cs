@@ -11,5 +11,5 @@ namespace MvvmApp.Services
 	{
 		bool TryOpenDialog(out string filePath);
 		void SaveDialog(ImageSource image, string filePath);
-	}
+    }
 }

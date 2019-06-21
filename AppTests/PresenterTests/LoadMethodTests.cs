@@ -1,42 +1,40 @@
 ﻿using System;
 using MvvmApp.ViewModels;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Input;
 using Moq;
-using MyImageLib;
 using MvvmApp.Services;
+using MyImageLib;
 
 namespace AppTests
 {
-	[TestFixture]
-	public class LoadMethodTests
-	{
-		Presenter presenter;
-		string filePath;
-		Mock<IFileService> fileServiceMock;
+    [TestFixture]
+    public class LoadMethodTests
+    {
+        Presenter presenter;
+        string filePath;
+        Mock<IFileService> fileServiceMock;
+        Mock<IProcessing> processingMock;
 
-	[SetUp]
-		public void SetUp()
-		{
-			presenter = new Presenter();
-			fileServiceMock = new Mock<IFileService>();
-			presenter.FileServicePropMyProperty = fileServiceMock.Object;
-			filePath = "some Path";
+        [SetUp]
+        public void SetUp()
+        {
+            fileServiceMock = new Mock<IFileService>();
+            processingMock = new Mock<IProcessing>();
+            presenter = new Presenter(fileServiceMock.Object,processingMock.Object);
+            filePath = "some Path";
             fileServiceMock.Setup(m => m.TryOpenDialog(out filePath)).Returns(true);
-		}
+        }
 
-		[Test]
-		public void Load_ConvertingTimeLabelChanged()
-		{
-			presenter.ConvertingTimeLabel = "some text";
-			
-			presenter.Load();
+        [Test]
+        public void Load_ConvertingTimeLabelChanged()
+        {
+            presenter.ConvertingTimeLabel = "some text";
 
-			Assert.IsNull(presenter.ConvertingTimeLabel);
-		}
+            presenter.Load();
+
+            Assert.IsNull(presenter.ConvertingTimeLabel);
+        }
 
         [Test]
         public void Load_NewImageLabelChanged()
@@ -49,43 +47,43 @@ namespace AppTests
         }
 
         [Test]
-		public void Load_OrgFilePathLabelChanged()
-		{
-			presenter.OrgFilePath = null;
-			
-			presenter.Load();
+        public void Load_OrgFilePathLabelChanged()
+        {
+            presenter.OrgFilePath = null;
 
-			Assert.AreEqual(filePath, presenter.OrgFilePath);
-		}
+            presenter.Load();
 
-		[Test]
-		public void Load_OpenImage_OrgImageCreated()
-		{
-			presenter.OrgImage = new BitmapImage();
-			
-			presenter.Load();
+            Assert.AreEqual(filePath, presenter.OrgFilePath);
+        }
 
-			Assert.IsNotNull(presenter.OrgImage);
-		}
+        [Test]
+        public void Load_OpenImage_OrgImageCreated()
+        {
+            presenter.OrgImage = new BitmapImage();
 
-		[Test]
-		public void Load_OpenImage_OrgImageLabelChanged()
-		{
-			presenter.OrgImageLabel = "some text";
-			
-			presenter.Load();
+            presenter.Load();
 
-			Assert.AreEqual(presenter.originalImageDescription, presenter.OrgImageLabel);
-		}
+            Assert.IsNotNull(presenter.OrgImage);
+        }
 
-		[Test]
-		public void Load_OpenImage_FilePathIsNull_ThrowsNullException()
-		{
-			filePath = null;
-			fileServiceMock.Setup(m => m.TryOpenDialog(out filePath)).Returns(true);
+        [Test]
+        public void Load_OpenImage_OrgImageLabelChanged()
+        {
+            presenter.OrgImageLabel = "some text";
 
-			Assert.Throws<ArgumentNullException>(() => presenter.Load());
-		}
+            presenter.Load();
+
+            Assert.AreEqual(presenter.originalImageDescription, presenter.OrgImageLabel);
+        }
+
+        [Test]
+        public void Load_OpenImage_FilePathIsNull_ThrowsNullException()
+        {
+            filePath = null;
+            fileServiceMock.Setup(m => m.TryOpenDialog(out filePath)).Returns(true);
+
+            Assert.Throws<ArgumentNullException>(() => presenter.Load());
+        }
 
         [Test]////
         public void Load_OpenImage_FilePathIsEmpty_ThrowsNullException()
@@ -115,7 +113,8 @@ namespace AppTests
 
             presenter.Load();
 
-            Assert.AreEqual(false, presenter.IsSaveEnabled);
+            Assert.AreEqual(false, presenter.IsSaveEnabled);///////
+            Assert.That(presenter.IsSaveEnabled, Is.False);
         }
     }
 }
