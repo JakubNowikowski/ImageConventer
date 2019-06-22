@@ -49,5 +49,11 @@
     <Compile Include="IProcessing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CppLibrary\CppLibrary.vcxproj">
+      <Project>{bfb6d4e6-d4e5-4014-b125-1ee58b5f820a}</Project>
+      <Name>CppLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

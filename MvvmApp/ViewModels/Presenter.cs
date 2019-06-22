@@ -205,13 +205,18 @@ namespace MvvmApp.ViewModels
             if (OrgImage == null)
                 return;
 
+            byte[] loadImageByteArr = _processing.ConvertImageToByteArray(OrgImage);
+
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-
-            NewImage = await _processing.CreateNewConvertedImage(OrgImage);
-
+            //loadImageByteArr = _processing.ConvertSync(loadImageByteArr);
+            //loadImageByteArr = _processing.ConvertCpp(loadImageByteArr);
+            loadImageByteArr = await _processing.ConvertAsync2(loadImageByteArr);
             stopwatch.Stop();
+            NewImage = await _processing.CreateNewConvertedImage(OrgImage, loadImageByteArr);
             TimeSpan ts = stopwatch.Elapsed;
+
+
             ShowLabels(ts);
 
             IsSaveEnabled = true;
