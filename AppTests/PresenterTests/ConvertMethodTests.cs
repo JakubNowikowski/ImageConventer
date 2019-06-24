@@ -25,7 +25,7 @@ namespace AppTests
             presenter = new Presenter(fileServiceMock.Object, processingMock.Object);
             newImage = new WriteableBitmap(1, 1, 96, 96, PixelFormats.Bgr32, null);
             presenter.OrgImage =  new BitmapImage();
-            processingMock.Setup(m => m.CreateNewConvertedImage(presenter.OrgImage)).Returns(Task.FromResult(newImage));
+            processingMock.Setup(m => m.CreateNewConvertedImage(presenter.OrgImage,presenter.SelectedConvertOption)).Returns(Task.FromResult(newImage));
         }
 
         [Test]

@@ -32,6 +32,21 @@ namespace MvvmApp.ViewModels
 
         #region Properties
 
+        public ICommand LoadImage
+        {
+            get { return new DelegateCommand(Load); }
+        }
+
+        public ICommand ConvertImage
+        {
+            get { return new DelegateCommand(async () => await Convert()); }
+        }
+
+        public ICommand SaveImage
+        {
+            get { return new DelegateCommand(SaveAs); }
+        }
+
         private BitmapImage _orgImage;
         public BitmapImage OrgImage
         {
@@ -138,27 +153,69 @@ namespace MvvmApp.ViewModels
             RaisePropertyChangedEvent(name);
         }
 
-        public ICommand LoadImage
+        private bool _convertNormally;
+        public bool ConvertNormally
         {
-            get { return new DelegateCommand(Load); }
+            get { return _convertNormally; }
+            set
+            {
+                _convertNormally = value;
+                RaisePropertyChangedEvent("ConvertNormally");
+            }
         }
 
-        public ICommand ConvertImage
+        private bool _convertAsynchronously;
+        public bool ConvertAsynchronously
         {
-            get { return new DelegateCommand(async () => await Convert()); }
+            get { return _convertAsynchronously; }
+            set
+            {
+                _convertAsynchronously = value;
+                RaisePropertyChangedEvent("ConvertAsynchronously");
+            }
         }
 
-        public ICommand SaveImage
+        private bool _convertUsingCpp;
+        public bool ConvertUsingCpp
         {
-            get { return new DelegateCommand(SaveAs); }
+            get { return _convertUsingCpp; }
+            set
+            {
+                _convertUsingCpp = value;
+                RaisePropertyChangedEvent("ConvertUsingCpp");
+            }
         }
+
+        private List<ConvertMode> _convertOpitons;
+        public List<ConvertMode> ConvertOpitons
+        {
+            get => new List<ConvertMode>()
+            {
+            ConvertMode.Normally,
+            ConvertMode.Asynchronously,
+            ConvertMode.UsingCpp,
+            };
+            set => _convertOpitons = value;
+        }
+
+        private ConvertMode _selectedConverOption = ConvertMode.Normally;
+        public ConvertMode SelectedConvertOption
+        {
+            get => _selectedConverOption;
+            set
+            {
+                _selectedConverOption = value;
+                RaisePropertyChangedEvent("SelectedConvertOption");
+            }
+        }
+
         #endregion
 
         public void Load()
         {
+
             //ErrorLabel = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
             //OnPropertyChanged(() => ErrorLabel);
-
             ClearAll();
             if (_fileDialogService.TryOpenDialog(out var filePath))
             {
@@ -205,20 +262,15 @@ namespace MvvmApp.ViewModels
             if (OrgImage == null)
                 return;
 
-            byte[] loadImageByteArr = _processing.ConvertImageToByteArray(OrgImage);
-
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            //loadImageByteArr = _processing.ConvertSync(loadImageByteArr);
-            //loadImageByteArr = _processing.ConvertCpp(loadImageByteArr);
-            loadImageByteArr = await _processing.ConvertAsync2(loadImageByteArr);
+
+            NewImage = await _processing.CreateNewConvertedImage(OrgImage, SelectedConvertOption);
+
             stopwatch.Stop();
-            NewImage = await _processing.CreateNewConvertedImage(OrgImage, loadImageByteArr);
             TimeSpan ts = stopwatch.Elapsed;
 
-
             ShowLabels(ts);
-
             IsSaveEnabled = true;
         }
 

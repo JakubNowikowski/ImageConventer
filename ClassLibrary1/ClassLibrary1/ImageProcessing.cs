@@ -12,9 +12,9 @@ namespace MyImageLib
 {
     public class ImageProcessing : IProcessing
     {
-        public async Task<WriteableBitmap> CreateNewConvertedImage(BitmapImage loadImage, byte[] array)
+
+        public async Task<WriteableBitmap> CreateNewConvertedImage(BitmapImage loadImage, ConvertMode convertMode)
         {
-            ManagedClass mc = new CliNamespace.ManagedClass();
 
             int height = loadImage.PixelHeight;
             int width = loadImage.PixelWidth;
@@ -24,22 +24,12 @@ namespace MyImageLib
             Int32Rect rect;
             var dpix = loadImage.DpiX;
             var dpiy = loadImage.DpiY;
-            //loadImageByteArr = ConvertImageToByteArray(loadImage);
 
-            //mc.ToMainColorsCPP(loadImageByteArr);
-            //loadImageByteArr = ConvertSync(loadImageByteArr);
-            //loadImageByteArr = await ConvertAsync2(loadImageByteArr);
-
+            loadImageByteArr = ConvertImageToByteArray(loadImage);
+            loadImageByteArr = await ConvertWithSelectedMode(convertMode, loadImageByteArr);
             writeImg = CreateNewEmptyImage(width, height, out rect, dpix, dpiy);
-            writeImg.WritePixels(rect, array, nStride, 0);
+            writeImg.WritePixels(rect, loadImageByteArr, nStride, 0);
             return writeImg;
-        }
-
-        public WriteableBitmap CreateNewEmptyImage(int width, int height, out Int32Rect rect, double a, double b)
-        {
-            WriteableBitmap emptyImg = new WriteableBitmap(width, height, a, b, PixelFormats.Pbgra32, null);
-            rect = new Int32Rect(0, 0, width, height);
-            return emptyImg;
         }
 
         public byte[] ConvertImageToByteArray(BitmapImage loadImg)
@@ -52,6 +42,26 @@ namespace MyImageLib
             loadImg.CopyPixels(pixelOrgArr, nStride, 0);
             return pixelOrgArr;
         }
+
+        private async Task<byte[]> ConvertWithSelectedMode(ConvertMode convertMode, byte[] loadImageByteArr)
+        {
+            ManagedClass mc = new ManagedClass();
+            if (convertMode == ConvertMode.Normally)
+                loadImageByteArr = ToMainColors(loadImageByteArr);
+            if (convertMode == ConvertMode.Asynchronously)
+                loadImageByteArr = await ToMainColorsAsync(loadImageByteArr);
+            if (convertMode == ConvertMode.UsingCpp)
+                mc.ToMainColorsCPP(loadImageByteArr);
+            return loadImageByteArr;
+        }
+
+        public WriteableBitmap CreateNewEmptyImage(int width, int height, out Int32Rect rect, double a, double b)
+        {
+            WriteableBitmap emptyImg = new WriteableBitmap(width, height, a, b, PixelFormats.Pbgra32, null);
+            rect = new Int32Rect(0, 0, width, height);
+            return emptyImg;
+        }
+
 
         //public byte[] ToMainColors(byte[] OrgArr)
         //{
@@ -96,7 +106,7 @@ namespace MyImageLib
             return OrgArr;
         }
 
-        public byte[] ConvertSync(byte[] OrgArr)
+        public byte[] ToMainColors(byte[] OrgArr)
         {
             int i = 0;
 
@@ -168,7 +178,7 @@ namespace MyImageLib
             });
         }
 
-        public async Task<byte[]> ConvertAsync2(byte[] orgArr)
+        public async Task<byte[]> ToMainColorsAsync(byte[] orgArr)
         {
             int taskCount = 4;
             int orgLength = orgArr.Length;
@@ -191,14 +201,14 @@ namespace MyImageLib
             //byte[] arr3 = results[2];
             //byte[] arr4 = results[3];
 
-            int chunkLength = orgLength / 4;
+            int truncLength = orgLength / 4;
 
             Task<byte[]>[] tasks = new Task<byte[]>[taskCount];
 
             for (int i = 0; i < taskCount; i++)
             {
-                int startIndex = i * chunkLength;
-                int length = (i + 1) * chunkLength;
+                int startIndex = i * truncLength;
+                int length = (i + 1) * truncLength;
 
                 tasks[i] = Task.Run(() => ConvertShort(orgArr, startIndex, length));
             }

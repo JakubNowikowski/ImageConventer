@@ -229,7 +229,7 @@ namespace MyImageLibTests
             newImage = null;
             bitmapImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Bmp);
 
-            newImage = await imgProc.CreateNewConvertedImage(bitmapImage);
+            newImage = await imgProc.CreateNewConvertedImage(bitmapImage,ConvertMode.Normally);
 
             Assert.That(newImage, Is.Not.Null);
         }
