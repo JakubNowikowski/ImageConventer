@@ -12,8 +12,8 @@ namespace MyImageLib
         Task<WriteableBitmap> CreateNewConvertedImage(BitmapImage loadImage, ConvertMode convertMode);
         Task<byte[]> ConvertAsync(byte[] orgArr);
         byte[] ConvertImageToByteArray(BitmapImage loadImg);
-        byte[] ConvertCpp(byte[] OrgArr);
-        byte[] ToMainColors(byte[] OrgArr);
+        void ConvertCpp(byte[] OrgArr);
+        void ToMainColors(byte[] OrgArr);
         Task<byte[]> ToMainColorsAsync(byte[] orgArr);
     }
 }

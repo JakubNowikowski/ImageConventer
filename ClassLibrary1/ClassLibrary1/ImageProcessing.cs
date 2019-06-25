@@ -27,6 +27,7 @@ namespace MyImageLib
 
             loadImageByteArr = ConvertImageToByteArray(loadImage);
             loadImageByteArr = await ConvertWithSelectedMode(convertMode, loadImageByteArr);
+            //await ToMainColorsAsync2(loadImageByteArr);
             writeImg = CreateNewEmptyImage(width, height, out rect, dpix, dpiy);
             writeImg.WritePixels(rect, loadImageByteArr, nStride, 0);
             return writeImg;
@@ -47,9 +48,9 @@ namespace MyImageLib
         {
             ManagedClass mc = new ManagedClass();
             if (convertMode == ConvertMode.Normally)
-                loadImageByteArr = ToMainColors(loadImageByteArr);
+                ToMainColors(loadImageByteArr);
             if (convertMode == ConvertMode.Asynchronously)
-                loadImageByteArr = await ToMainColorsAsync(loadImageByteArr);
+                await ToMainColorsAsync2(loadImageByteArr);
             if (convertMode == ConvertMode.UsingCpp)
                 mc.ToMainColorsCPP(loadImageByteArr);
             return loadImageByteArr;
@@ -99,14 +100,13 @@ namespace MyImageLib
         //    return OrgArr;
         //}
 
-        public byte[] ConvertCpp(byte[] OrgArr)
+        public void ConvertCpp(byte[] OrgArr)
         {
             ManagedClass mc = new CliNamespace.ManagedClass();
             mc.ToMainColorsCPP(OrgArr);
-            return OrgArr;
         }
 
-        public byte[] ToMainColors(byte[] OrgArr)
+        public void ToMainColors(byte[] OrgArr)
         {
             int i = 0;
 
@@ -139,7 +139,6 @@ namespace MyImageLib
                 }
                 i += 4;
             }
-            return OrgArr;
         }
 
         public async Task<byte[]> ConvertAsync(byte[] orgArr)
@@ -188,19 +187,6 @@ namespace MyImageLib
             int lenght3 = lenght1 * 3;
             int lenght4 = lenght1 * 4;
 
-            //List<Task<byte[]>> tasks = new List<Task<byte[]>>();
-
-            //tasks.Add(Task.Run(() => ConvertShort(orgArr, 0, lenght1)));
-            //tasks.Add(Task.Run(() => ConvertShort(orgArr, lenght1, lenght2)));
-            //tasks.Add(Task.Run(() => ConvertShort(orgArr, lenght2, lenght3)));
-            //tasks.Add(Task.Run(() => ConvertShort(orgArr, lenght3, lenght4)));
-            //var results = await Task.WhenAll(tasks);
-
-            //byte[] arr1 = results[0];
-            //byte[] arr2 = results[1];
-            //byte[] arr3 = results[2];
-            //byte[] arr4 = results[3];
-
             int truncLength = orgLength / 4;
 
             Task<byte[]>[] tasks = new Task<byte[]>[taskCount];
@@ -229,18 +215,35 @@ namespace MyImageLib
             return z;
 
 
+        }
 
-            //arr1 = ConvertShort1(orgArr);
-            // arr2 = ConvertShort2(orgArr);
+        public async Task ToMainColorsAsync2(byte[] input)
+        {
+            var taskCount = Environment.ProcessorCount;
 
+            var lengthInPixels = input.Length / 4;
 
-            //byte[] arr1 = await ConvertShort(orgArr.Take(length / 3).ToArray());
-            //byte[] arr2 = await ConvertShort(orgArr.Skip(length / 3).ToArray());
-            //byte[] arr3 = await ConvertShort(orgArr.Skip(skip3).ToArray());
-            //return arr1.Concat(arr2).Concat(arr3).ToArray();
-            //return arr1.Concat(arr2).ToArray();
+            var chunkLength = lengthInPixels / taskCount;
+            chunkLength *= 4;
+            var lastChunkLength = lengthInPixels % taskCount;
+            lastChunkLength *= 4;
+            List<Task> tasks = new List<Task>();
 
+            for (int i = 0; i <= taskCount; i++)
+            {
+                var start = chunkLength * i;
+                var end = start + chunkLength;
+                if (i == taskCount)
+                {
+                    end = start + lastChunkLength;
+                }
 
+                tasks.Add(Task.Run(() =>
+                {
+                    ConvertShort(input, start, end);
+                }));
+            }
+            await Task.WhenAll(tasks.ToArray());
         }
 
         public byte[] ConvertShort(byte[] orgArr, int start, int stop)

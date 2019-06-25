@@ -21,7 +21,7 @@ namespace AppTests
         {
             fileServiceMock = new Mock<IFileService>();
             processingMock = new Mock<IProcessing>();
-            presenter = new Presenter(fileServiceMock.Object,processingMock.Object);
+            presenter = new Presenter(fileServiceMock.Object, processingMock.Object);
             filePath = "some Path";
             fileServiceMock.Setup(m => m.TryOpenDialog(out filePath)).Returns(true);
         }
@@ -85,7 +85,7 @@ namespace AppTests
             Assert.Throws<ArgumentNullException>(() => presenter.Load());
         }
 
-        [Test]////
+        [Test]
         public void Load_OpenImage_FilePathIsEmpty_ThrowsNullException()
         {
             filePath = "";
@@ -94,7 +94,7 @@ namespace AppTests
             Assert.Throws<ArgumentNullException>(() => presenter.Load());
         }
 
-        [Test]////
+        [Test]
         public void Load_IsConvertedEnabledChangedToFalse()
         {
             presenter.IsConvertEnabled = true;
@@ -105,7 +105,7 @@ namespace AppTests
             Assert.AreEqual(false, presenter.IsConvertEnabled);
         }
 
-        [Test]////
+        [Test]
         public void Load_IsSaveEnabledChangedToFalse()
         {
             presenter.IsSaveEnabled = true;
@@ -113,7 +113,6 @@ namespace AppTests
 
             presenter.Load();
 
-            Assert.AreEqual(false, presenter.IsSaveEnabled);///////
             Assert.That(presenter.IsSaveEnabled, Is.False);
         }
     }

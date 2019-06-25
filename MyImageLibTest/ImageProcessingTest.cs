@@ -23,7 +23,7 @@ namespace MyImageLibTests
         Int32Rect rect;
         double a = 1;
         double b = 1;
-        BitmapImage bitmapImage;
+        BitmapImage loadImage;
         WriteableBitmap newImage;
 
         ref byte blue => ref arr[0];
@@ -143,9 +143,9 @@ namespace MyImageLibTests
         [Test]
         public void ConvertImageToByteArray_PngFormat()
         {
-            bitmapImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Png);
+            loadImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Png);
 
-            arr = imgProc.ConvertImageToByteArray(bitmapImage);
+            arr = imgProc.ConvertImageToByteArray(loadImage);
 
             Assert.That(arr, Has.Some.GreaterThan(0));
         }
@@ -153,9 +153,9 @@ namespace MyImageLibTests
         [Test]
         public void ConvertImageToByteArray_JpegFormat()
         {
-            bitmapImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Jpeg);
+            loadImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Jpeg);
 
-            arr = imgProc.ConvertImageToByteArray(bitmapImage);
+            arr = imgProc.ConvertImageToByteArray(loadImage);
 
             Assert.That(arr, Has.Some.GreaterThan(0));
         }
@@ -163,9 +163,9 @@ namespace MyImageLibTests
         [Test]
         public void ConvertImageToByteArray_BmpFormat()
         {
-            bitmapImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Bmp);
+            loadImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Bmp);
 
-            arr = imgProc.ConvertImageToByteArray(bitmapImage);
+            arr = imgProc.ConvertImageToByteArray(loadImage);
 
             Assert.That(arr, Has.Some.GreaterThan(0));
         }
@@ -173,9 +173,9 @@ namespace MyImageLibTests
         [Test]
         public void ConvertImageToByteArray_WhiteColor_AllElementsAreEqualTo255()
         {
-            bitmapImage = CreateBitmapImage(Color.White, ImageFormat.Bmp);
+            loadImage = CreateBitmapImage(Color.White, ImageFormat.Bmp);
 
-            arr = imgProc.ConvertImageToByteArray(bitmapImage);
+            arr = imgProc.ConvertImageToByteArray(loadImage);
 
             Assert.That(arr, Has.Exactly(4).EqualTo(255));
         }
@@ -183,9 +183,9 @@ namespace MyImageLibTests
         [Test]
         public void ConvertImageToByteArray_BlackColor_ThreeElementsAreEqualTo0()
         {
-            bitmapImage = CreateBitmapImage(Color.Black, ImageFormat.Bmp);
+            loadImage = CreateBitmapImage(Color.Black, ImageFormat.Bmp);
 
-            arr = imgProc.ConvertImageToByteArray(bitmapImage);
+            arr = imgProc.ConvertImageToByteArray(loadImage);
 
             Assert.That(arr, Has.Exactly(3).EqualTo(0));
         }
@@ -218,7 +218,6 @@ namespace MyImageLibTests
 
         #region CreateNewConvertedImage
 
-        [Ignore("Problem with mocking async method")]
         [Test]
         public async Task CreateNewConvertedImage()
         {
@@ -227,9 +226,9 @@ namespace MyImageLibTests
             processingMock.Setup(m => m.ConvertAsync(arr)).Returns(Task.FromResult(arr));
 
             newImage = null;
-            bitmapImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Bmp);
+            loadImage = CreateBitmapImage(Color.AliceBlue, ImageFormat.Bmp);
 
-            newImage = await imgProc.CreateNewConvertedImage(bitmapImage,ConvertMode.Normally);
+            newImage = await imgProc.CreateNewConvertedImage(loadImage,ConvertMode.Normally);
 
             Assert.That(newImage, Is.Not.Null);
         }

@@ -14,8 +14,8 @@ namespace MvvmApp.Services
 			OpenFileDialog opDlg = new OpenFileDialog
 			{
 				Title = "Open Image",
-				Filter = "Bmp files (*.bmp)|*.bmp|Png files (*.png)|*.png|Image files (*.jpg)|*.jpg",
-				RestoreDirectory = true
+				Filter = "Image files (*.jpg)|*.jpg|Png files (*.png)|*.png|Bmp files (*.bmp)|*.bmp",
+                RestoreDirectory = true
 			};
 			bool success = opDlg.ShowDialog() == DialogResult.OK;
 			if (success)

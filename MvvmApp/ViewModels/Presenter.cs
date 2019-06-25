@@ -21,6 +21,7 @@ namespace MvvmApp.ViewModels
         public string convertedImageDescription = "Converted image:";
         public string convertedTimeDescription = "Converting time (min/sec/ms): ";
         public string originalImageDescription = "Original image:";
+        public string sizeIsTooBigDescriprion = "Image size is too big to convert";
         IFileService _fileDialogService;
         IProcessing _processing;
 
@@ -110,6 +111,17 @@ namespace MvvmApp.ViewModels
             {
                 _convertingTimeLabel = value;
                 RaisePropertyChangedEvent("ConvertingTimeLabel");
+            }
+        }
+
+        private string _sizeIsTooBigLabel;
+        public string SizeIsTooBigLabel
+        {
+            get { return _sizeIsTooBigLabel; }
+            set
+            {
+                _sizeIsTooBigLabel = value;
+                RaisePropertyChangedEvent("SizeIsTooBigLabel");
             }
         }
 
@@ -230,6 +242,14 @@ namespace MvvmApp.ViewModels
             }
         }
 
+        private bool IsImageSizeValid(BitmapImage image)
+        {
+            if (image == null)
+                return false;
+
+            return false;
+        }
+
         private void OpenImage(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
@@ -249,6 +269,7 @@ namespace MvvmApp.ViewModels
             ConvertingTimeLabel = null;
             NewImageLabel = null;
             OrgImageLabel = null;
+            SizeIsTooBigLabel = null;
         }
 
         private void ClearImages()
@@ -259,8 +280,11 @@ namespace MvvmApp.ViewModels
 
         public async Task Convert()
         {
-            if (OrgImage == null)
+            if (OrgImage == null || !IsSizeValid())
+            {
+                SizeIsTooBigLabel = sizeIsTooBigDescriprion;
                 return;
+            }
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -272,6 +296,14 @@ namespace MvvmApp.ViewModels
 
             ShowLabels(ts);
             IsSaveEnabled = true;
+        }
+
+        private bool IsSizeValid()
+        {
+            var size = OrgImage.PixelHeight * OrgImage.PixelWidth;
+            if (size < 80000000)
+                return true;
+            return false;
         }
 
         private void ShowLabels(TimeSpan ts)
