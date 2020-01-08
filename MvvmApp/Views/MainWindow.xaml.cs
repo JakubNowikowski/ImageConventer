@@ -12,7 +12,7 @@ namespace MvvmApp.Views
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new Presenter(new FileDialogService(), new ImageProcessing());
+            DataContext = new MainWindowViewModel(new FileDialogService(), new ImageProcessing());
         }
     }
 }

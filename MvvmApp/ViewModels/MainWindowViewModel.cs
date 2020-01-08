@@ -16,7 +16,7 @@ using System.Diagnostics;
 
 namespace MvvmApp.ViewModels
 {
-    public class Presenter : ObservableObject
+    public class MainWindowViewModel : ObservableObject
     {
         public string convertedImageDescription = "Converted image:";
         public string convertedTimeDescription = "Converting time (min/sec/ms): ";
@@ -25,7 +25,7 @@ namespace MvvmApp.ViewModels
         IFileService _fileDialogService;
         IProcessing _processing;
 
-        public Presenter(IFileService fileDialogService, IProcessing processing)
+        public MainWindowViewModel(IFileService fileDialogService, IProcessing processing)
         {
             _fileDialogService = fileDialogService;
             _processing = processing;

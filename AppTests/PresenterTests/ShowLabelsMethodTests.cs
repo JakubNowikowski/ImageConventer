@@ -16,7 +16,7 @@ namespace AppTests
     [TestFixture]
     public class ShowLabelsMethodTests
     {
-        Presenter presenter;
+        MainWindowViewModel mainWindowViewModel;
         BitmapImage loadImage;
         WriteableBitmap newImage;
         Mock<IFileService> fileServiceMock;
@@ -53,40 +53,40 @@ namespace AppTests
         {
             fileServiceMock = new Mock<IFileService>();
             processingMock = new Mock<IProcessing>();
-            presenter = new Presenter(fileServiceMock.Object, processingMock.Object);
+            mainWindowViewModel = new MainWindowViewModel(fileServiceMock.Object, processingMock.Object);
             newImage = new WriteableBitmap(1, 1, 96, 96, PixelFormats.Bgr32, null);
             loadImage = CreateBitmapImage();
-            processingMock.Setup(m => m.CreateNewConvertedImage(presenter.OrgImage, presenter.SelectedConvertOption)).Returns(Task.FromResult(newImage));
+            processingMock.Setup(m => m.CreateNewConvertedImage(mainWindowViewModel.OrgImage, mainWindowViewModel.SelectedConvertOption)).Returns(Task.FromResult(newImage));
         }
 
         [Test]
         public void ShowLabels_NewImageLabelChanged()
         {
-            presenter.NewImageLabel = null;
+            mainWindowViewModel.NewImageLabel = null;
 
-            presenter.ShowLabels(TimeSpan.Zero);
+            mainWindowViewModel.ShowLabels(TimeSpan.Zero);
 
-            Assert.AreEqual(presenter.convertedImageDescription, presenter.NewImageLabel);
+            Assert.AreEqual(mainWindowViewModel.convertedImageDescription, mainWindowViewModel.NewImageLabel);
         }
 
         [Test]
         public void ShowLabels_ConvertingTimeLabelChanged()
         {
-            presenter.ConvertingTimeLabel = null;
+            mainWindowViewModel.ConvertingTimeLabel = null;
 
-            presenter.ShowLabels(TimeSpan.Zero);
+            mainWindowViewModel.ShowLabels(TimeSpan.Zero);
 
-            Assert.That(presenter.ConvertingTimeLabel.Contains(presenter.convertedTimeDescription));
+            Assert.That(mainWindowViewModel.ConvertingTimeLabel.Contains(mainWindowViewModel.convertedTimeDescription));
         }
 
         [Test]
         public void ShowLabels_IsSaveEnabledChanged()
         {
-            presenter.IsSaveEnabled = false;
+            mainWindowViewModel.IsSaveEnabled = false;
 
-            presenter.ShowLabels(TimeSpan.Zero);
+            mainWindowViewModel.ShowLabels(TimeSpan.Zero);
 
-            Assert.That(presenter.IsSaveEnabled);
+            Assert.That(mainWindowViewModel.IsSaveEnabled);
         }
     }
 }

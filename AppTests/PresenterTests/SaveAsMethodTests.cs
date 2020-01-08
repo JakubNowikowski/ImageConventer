@@ -11,7 +11,7 @@ namespace AppTests
     [TestFixture]
     public class SaveAsMethodTests
     {
-        Presenter presenter;
+        MainWindowViewModel mainWindowViewModel;
         string filePath;
         ImageSource image;
         Mock<IFileService> fileServiceMock;
@@ -22,7 +22,7 @@ namespace AppTests
         {
             fileServiceMock = new Mock<IFileService>();
             processingMock = new Mock<IProcessing>();
-            presenter = new Presenter(fileServiceMock.Object, processingMock.Object);
+            mainWindowViewModel = new MainWindowViewModel(fileServiceMock.Object, processingMock.Object);
             filePath = "some Path";
             image = new WriteableBitmap(1, 1, 96, 96, PixelFormats.Bgr32, null);
             fileServiceMock.Setup(m => m.SaveDialog(image, filePath));
@@ -31,22 +31,22 @@ namespace AppTests
         [Test]
         public void SaveAs_NewImageIsNull_SaveDialogIsNotCalled()
         {
-            presenter.NewImage = null;
+            mainWindowViewModel.NewImage = null;
 
-            presenter.SaveAs();
+            mainWindowViewModel.SaveAs();
 
-            fileServiceMock.Verify(m => m.SaveDialog(presenter.NewImage, filePath), Times.Never());
+            fileServiceMock.Verify(m => m.SaveDialog(mainWindowViewModel.NewImage, filePath), Times.Never());
         }
 
         [Test]
         public void SaveAs_NewImageIsValid_SaveDialogIsCalled()
         {
-            presenter.NewImage = image;
-            presenter.OrgFilePath = filePath;
+            mainWindowViewModel.NewImage = image;
+            mainWindowViewModel.OrgFilePath = filePath;
 
-            presenter.SaveAs();
+            mainWindowViewModel.SaveAs();
 
-            fileServiceMock.Verify(m => m.SaveDialog(presenter.NewImage, presenter.OrgFilePath), Times.Once());
+            fileServiceMock.Verify(m => m.SaveDialog(mainWindowViewModel.NewImage, mainWindowViewModel.OrgFilePath), Times.Once());
         }
     }
 }

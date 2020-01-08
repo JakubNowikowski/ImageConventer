@@ -11,7 +11,7 @@ namespace AppTests
     [TestFixture]
     public class LoadMethodTests
     {
-        Presenter presenter;
+        MainWindowViewModel mainWindowViewModel;
         string filePath;
         Mock<IFileService> fileServiceMock;
         Mock<IProcessing> processingMock;
@@ -21,7 +21,7 @@ namespace AppTests
         {
             fileServiceMock = new Mock<IFileService>();
             processingMock = new Mock<IProcessing>();
-            presenter = new Presenter(fileServiceMock.Object, processingMock.Object);
+            mainWindowViewModel = new MainWindowViewModel(fileServiceMock.Object, processingMock.Object);
             filePath = "some Path";
             fileServiceMock.Setup(m => m.TryOpenDialog(out filePath)).Returns(true);
         }
@@ -29,51 +29,51 @@ namespace AppTests
         [Test]
         public void Load_ConvertingTimeLabelChanged()
         {
-            presenter.ConvertingTimeLabel = "some text";
+            mainWindowViewModel.ConvertingTimeLabel = "some text";
 
-            presenter.Load();
+            mainWindowViewModel.Load();
 
-            Assert.IsNull(presenter.ConvertingTimeLabel);
+            Assert.IsNull(mainWindowViewModel.ConvertingTimeLabel);
         }
 
         [Test]
         public void Load_NewImageLabelChanged()
         {
-            presenter.NewImageLabel = "some text";
+            mainWindowViewModel.NewImageLabel = "some text";
 
-            presenter.Load();
+            mainWindowViewModel.Load();
 
-            Assert.IsNull(presenter.NewImageLabel);
+            Assert.IsNull(mainWindowViewModel.NewImageLabel);
         }
 
         [Test]
         public void Load_OrgFilePathLabelChanged()
         {
-            presenter.OrgFilePath = null;
+            mainWindowViewModel.OrgFilePath = null;
 
-            presenter.Load();
+            mainWindowViewModel.Load();
 
-            Assert.AreEqual(filePath, presenter.OrgFilePath);
+            Assert.AreEqual(filePath, mainWindowViewModel.OrgFilePath);
         }
 
         [Test]
         public void Load_OpenImage_OrgImageCreated()
         {
-            presenter.OrgImage = new BitmapImage();
+            mainWindowViewModel.OrgImage = new BitmapImage();
 
-            presenter.Load();
+            mainWindowViewModel.Load();
 
-            Assert.IsNotNull(presenter.OrgImage);
+            Assert.IsNotNull(mainWindowViewModel.OrgImage);
         }
 
         [Test]
         public void Load_OpenImage_OrgImageLabelChanged()
         {
-            presenter.OrgImageLabel = "some text";
+            mainWindowViewModel.OrgImageLabel = "some text";
 
-            presenter.Load();
+            mainWindowViewModel.Load();
 
-            Assert.AreEqual(presenter.originalImageDescription, presenter.OrgImageLabel);
+            Assert.AreEqual(mainWindowViewModel.originalImageDescription, mainWindowViewModel.OrgImageLabel);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace AppTests
             filePath = null;
             fileServiceMock.Setup(m => m.TryOpenDialog(out filePath)).Returns(true);
 
-            Assert.Throws<ArgumentNullException>(() => presenter.Load());
+            Assert.Throws<ArgumentNullException>(() => mainWindowViewModel.Load());
         }
 
         [Test]
@@ -91,29 +91,29 @@ namespace AppTests
             filePath = "";
             fileServiceMock.Setup(m => m.TryOpenDialog(out filePath)).Returns(true);
 
-            Assert.Throws<ArgumentNullException>(() => presenter.Load());
+            Assert.Throws<ArgumentNullException>(() => mainWindowViewModel.Load());
         }
 
         [Test]
         public void Load_IsConvertedEnabledChangedToFalse()
         {
-            presenter.IsConvertEnabled = true;
+            mainWindowViewModel.IsConvertEnabled = true;
             fileServiceMock.Setup(m => m.TryOpenDialog(out filePath)).Returns(false);
 
-            presenter.Load();
+            mainWindowViewModel.Load();
 
-            Assert.AreEqual(false, presenter.IsConvertEnabled);
+            Assert.AreEqual(false, mainWindowViewModel.IsConvertEnabled);
         }
 
         [Test]
         public void Load_IsSaveEnabledChangedToFalse()
         {
-            presenter.IsSaveEnabled = true;
+            mainWindowViewModel.IsSaveEnabled = true;
             fileServiceMock.Setup(m => m.TryOpenDialog(out filePath)).Returns(false);
 
-            presenter.Load();
+            mainWindowViewModel.Load();
 
-            Assert.That(presenter.IsSaveEnabled, Is.False);
+            Assert.That(mainWindowViewModel.IsSaveEnabled, Is.False);
         }
     }
 }
