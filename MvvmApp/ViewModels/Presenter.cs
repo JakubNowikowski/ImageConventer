@@ -295,7 +295,6 @@ namespace MvvmApp.ViewModels
             TimeSpan ts = stopwatch.Elapsed;
 
             ShowLabels(ts);
-            IsSaveEnabled = true;
         }
 
         private bool IsSizeValid()
@@ -306,11 +305,12 @@ namespace MvvmApp.ViewModels
             return false;
         }
 
-        private void ShowLabels(TimeSpan ts)
+        public void ShowLabels(TimeSpan ts)
         {
             NewImageLabel = convertedImageDescription;
             ConvertingTimeLabel = convertedTimeDescription + String.Format("{0:00}:{1:00}:{2:00}",
             ts.Minutes, ts.Seconds, ts.Milliseconds);
+            IsSaveEnabled = true;
         }
 
         public void SaveAs()

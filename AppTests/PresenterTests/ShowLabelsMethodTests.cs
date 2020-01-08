@@ -9,13 +9,12 @@ using MvvmApp.Services;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-
-
+using System;
 
 namespace AppTests
 {
     [TestFixture]
-    public class ConvertMethodTests
+    public class ShowLabelsMethodTests
     {
         Presenter presenter;
         BitmapImage loadImage;
@@ -61,32 +60,31 @@ namespace AppTests
         }
 
         [Test]
-        public async Task Convert_ShowLabels_NewImageLabelChanged()
+        public void ShowLabels_NewImageLabelChanged()
         {
             presenter.NewImageLabel = null;
 
-            await presenter.Convert();
-            //presenter.Convert().GetAwaiter().GetResult();
+            presenter.ShowLabels(TimeSpan.Zero);
 
             Assert.AreEqual(presenter.convertedImageDescription, presenter.NewImageLabel);
         }
 
         [Test]
-        public async Task Convert_ShowLabels_ConvertingTimeLabelChanged()
+        public void ShowLabels_ConvertingTimeLabelChanged()
         {
             presenter.ConvertingTimeLabel = null;
 
-            await presenter.Convert();
+            presenter.ShowLabels(TimeSpan.Zero);
 
             Assert.That(presenter.ConvertingTimeLabel.Contains(presenter.convertedTimeDescription));
         }
 
         [Test]
-        public async Task Convert_IsSaveEnabledChanged()
+        public void ShowLabels_IsSaveEnabledChanged()
         {
             presenter.IsSaveEnabled = false;
 
-            await presenter.Convert();
+            presenter.ShowLabels(TimeSpan.Zero);
 
             Assert.That(presenter.IsSaveEnabled);
         }

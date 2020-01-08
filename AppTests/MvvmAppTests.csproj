@@ -72,8 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PresenterTests\SaveAsMethodTests.cs" />
-    <Compile Include="PresenterTests\ConvertMethodTests.cs" />
     <Compile Include="PresenterTests\LoadMethodTests.cs" />
+    <Compile Include="PresenterTests\ShowLabelsMethodTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
