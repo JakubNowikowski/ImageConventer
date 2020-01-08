@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmApp", "MvvmApp\MvvmApp.csproj", "{323AF9F0-DD3A-4C6F-A5F5-27A4B557A2FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyImageLib", "ClassLibrary1\ClassLibrary1\MyImageLib.csproj", "{8A44CF6C-2902-4684-86D8-06DE96DD12D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyImageLib", "MyImageLib\MyImageLib\MyImageLib.csproj", "{8A44CF6C-2902-4684-86D8-06DE96DD12D4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EC9FC858-5A11-4887-8C4D-7FD69DDD69A1}"
 	ProjectSection(SolutionItems) = preProject

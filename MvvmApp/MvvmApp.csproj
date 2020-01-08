@@ -35,8 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClassLibrary1">
-      <HintPath>..\ClassLibrary1\ClassLibrary1\bin\Debug\ClassLibrary1.dll</HintPath>
+    <Reference Include="MyImageLib">
+      <HintPath>..\MyImageLib\MyImageLib\bin\Debug\MyImageLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -104,12 +104,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\ClassLibrary1\MyImageLib.csproj">
-      <Project>{8a44cf6c-2902-4684-86d8-06de96dd12d4}</Project>
-      <Name>MyImageLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

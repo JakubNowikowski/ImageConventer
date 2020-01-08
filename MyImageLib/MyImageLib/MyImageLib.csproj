@@ -7,8 +7,8 @@
     <ProjectGuid>{8A44CF6C-2902-4684-86D8-06DE96DD12D4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClassLibrary1</RootNamespace>
-    <AssemblyName>ClassLibrary1</AssemblyName>
+    <RootNamespace>MyImageLib</RootNamespace>
+    <AssemblyName>MyImageLib</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

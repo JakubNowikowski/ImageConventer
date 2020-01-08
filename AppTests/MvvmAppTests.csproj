@@ -80,13 +80,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\ClassLibrary1\MyImageLib.csproj">
-      <Project>{8a44cf6c-2902-4684-86d8-06de96dd12d4}</Project>
-      <Name>MyImageLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MvvmApp\MvvmApp.csproj">
       <Project>{323af9f0-dd3a-4c6f-a5f5-27a4b557a2fe}</Project>
       <Name>MvvmApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MyImageLib\MyImageLib\MyImageLib.csproj">
+      <Project>{8a44cf6c-2902-4684-86d8-06de96dd12d4}</Project>
+      <Name>MyImageLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

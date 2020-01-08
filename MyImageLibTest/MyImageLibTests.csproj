@@ -79,8 +79,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\ClassLibrary1\MyImageLib.csproj">
-      <Project>{8a44cf6c-2902-4684-86d8-06de96dd12d4}</Project>
+    <ProjectReference Include="..\MyImageLib\MyImageLib\MyImageLib.csproj">
+      <Project>{8A44CF6C-2902-4684-86D8-06DE96DD12D4}</Project>
       <Name>MyImageLib</Name>
     </ProjectReference>
   </ItemGroup>

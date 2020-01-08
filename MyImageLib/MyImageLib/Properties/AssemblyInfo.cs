@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Ogólne informacje o zestawie są kontrolowane poprzez następujący 
 // zestaw atrybutów. Zmień wartości tych atrybutów, aby zmodyfikować informacje
 // powiązane z zestawem.
-[assembly: AssemblyTitle("ClassLibrary1")]
+[assembly: AssemblyTitle("MyImageLib")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ClassLibrary1")]
+[assembly: AssemblyProduct("MyImageLib")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
