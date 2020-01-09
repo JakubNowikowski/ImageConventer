@@ -9,11 +9,15 @@ namespace MyImageLib
 {
     public interface IProcessing
     {
+        #region Methods
+
         Task<WriteableBitmap> CreateNewConvertedImage(BitmapImage loadImage, ConvertMode convertMode);
         Task<byte[]> ConvertAsync(byte[] orgArr);
         byte[] ConvertImageToByteArray(BitmapImage loadImg);
         void ConvertCpp(byte[] OrgArr);
         void ToMainColors(byte[] OrgArr);
-        Task<byte[]> ToMainColorsAsync(byte[] orgArr);
+        Task ToMainColorsAsync(byte[] orgArr);
+
+        #endregion
     }
 }

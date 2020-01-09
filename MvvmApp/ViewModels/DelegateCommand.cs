@@ -5,10 +5,16 @@ namespace MvvmApp.ViewModels
 {
 	public class DelegateCommand : ICommand
 	{
-		private readonly Action _action;
+        #region Fields
+
+        private readonly Action _action;
 		private object v;
 
-		public DelegateCommand(Action action)
+        #endregion
+
+        #region Methods
+
+        public DelegateCommand(Action action)
 		{
 			_action = action;
 		}
@@ -28,8 +34,14 @@ namespace MvvmApp.ViewModels
 			return true;
 		}
 
+        #endregion
+
+        #region ICommand Interface
+
 #pragma warning disable 67
-		public event EventHandler CanExecuteChanged { add { } remove { } }
+        public event EventHandler CanExecuteChanged { add { } remove { } }
 #pragma warning restore 67
-	}
+
+        #endregion
+    }
 }

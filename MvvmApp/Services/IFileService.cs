@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace MvvmApp.Services
 {
-	public interface IFileService
+    public interface IFileService
 	{
-		bool TryOpenDialog(out string filePath);
+        #region Methods
+
+        bool TryOpenDialog(out string filePath);
 		void SaveDialog(ImageSource image, string filePath);
+        
+        #endregion
     }
 }

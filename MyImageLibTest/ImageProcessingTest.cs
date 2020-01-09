@@ -4,20 +4,19 @@ using NUnit.Framework;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace MyImageLibTests
 {
     [TestFixture]
     public class ImageProcessingTest
     {
+        #region Fields
+
         ImageProcessing imgProc;
         byte[] arr;
-
         int width = 1;
         int height = 1;
         Int32Rect rect;
@@ -26,9 +25,15 @@ namespace MyImageLibTests
         BitmapImage loadImage;
         WriteableBitmap newImage;
 
+        #endregion
+
+        #region Properties
+
         ref byte blue => ref arr[0];
         ref byte green => ref arr[1];
         ref byte red => ref arr[2];
+
+        #endregion
 
         #region Helpers
 
@@ -56,12 +61,16 @@ namespace MyImageLibTests
 
         #endregion
 
+        #region SetUp
+
         [SetUp]
         public void SetUp()
         {
             imgProc = new ImageProcessing();
             arr = new byte[4];
         }
+
+        #endregion
 
         #region ConvertArray Tests
 

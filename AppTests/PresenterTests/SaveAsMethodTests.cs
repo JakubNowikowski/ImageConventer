@@ -11,11 +11,17 @@ namespace AppTests
     [TestFixture]
     public class SaveAsMethodTests
     {
+        #region Fields
+
         MainWindowViewModel mainWindowViewModel;
         string filePath;
         ImageSource image;
         Mock<IFileService> fileServiceMock;
         Mock<IProcessing> processingMock;
+
+        #endregion
+
+        #region SetUp
 
         [SetUp]
         public void SetUp()
@@ -27,6 +33,10 @@ namespace AppTests
             image = new WriteableBitmap(1, 1, 96, 96, PixelFormats.Bgr32, null);
             fileServiceMock.Setup(m => m.SaveDialog(image, filePath));
         }
+
+        #endregion
+
+        #region Tests
 
         [Test]
         public void SaveAs_NewImageIsNull_SaveDialogIsNotCalled()
@@ -48,5 +58,7 @@ namespace AppTests
 
             fileServiceMock.Verify(m => m.SaveDialog(mainWindowViewModel.NewImage, mainWindowViewModel.OrgFilePath), Times.Once());
         }
+
+        #endregion
     }
 }

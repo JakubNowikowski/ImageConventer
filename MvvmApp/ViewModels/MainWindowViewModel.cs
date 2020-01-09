@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using MyImageLib;
-using System.Drawing;
 using System.Windows.Media;
-using System.IO;
-using System.Windows.Data;
 using MvvmApp.Services;
-using System.Windows.Forms;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Diagnostics;
@@ -18,18 +13,31 @@ namespace MvvmApp.ViewModels
 {
     public class MainWindowViewModel : ObservableObject
     {
+        #region Fields
+
         public string convertedImageDescription = "Converted image:";
         public string convertedTimeDescription = "Converting time (min/sec/ms): ";
         public string originalImageDescription = "Original image:";
         public string sizeIsTooBigDescriprion = "Image size is too big to convert";
         IFileService _fileDialogService;
         IProcessing _processing;
+        private BitmapImage _orgImage;
+        private ImageSource _newImage;
+        private string _orgImageLabel;
+        private string _newImageLabel;
+        private string _orgFilePath;
+        private string _convertingTimeLabel;
+        private string _sizeIsTooBigLabel;
+        private string _errorLabel;
+        private bool _isConvertEnabled;
+        private bool _isSaveEnabled;
+        private bool _convertNormally;
+        private bool _convertAsynchronously;
+        private bool _convertUsingCpp;
+        private List<ConvertMode> _convertOpitons;
+        private ConvertMode _selectedConverOption = ConvertMode.Normally;
 
-        public MainWindowViewModel(IFileService fileDialogService, IProcessing processing)
-        {
-            _fileDialogService = fileDialogService;
-            _processing = processing;
-        }
+        #endregion
 
         #region Properties
 
@@ -48,7 +56,6 @@ namespace MvvmApp.ViewModels
             get { return new DelegateCommand(SaveAs); }
         }
 
-        private BitmapImage _orgImage;
         public BitmapImage OrgImage
         {
             get { return _orgImage; }
@@ -59,7 +66,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private ImageSource _newImage;
         public ImageSource NewImage
         {
             get { return _newImage; }
@@ -70,7 +76,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private string _orgImageLabel;
         public string OrgImageLabel
         {
             get { return _orgImageLabel; }
@@ -81,7 +86,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private string _newImageLabel;
         public string NewImageLabel
         {
             get { return _newImageLabel; }
@@ -92,7 +96,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private string _orgFilePath;
         public string OrgFilePath
         {
             get { return _orgFilePath; }
@@ -103,7 +106,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private string _convertingTimeLabel;
         public string ConvertingTimeLabel
         {
             get { return _convertingTimeLabel; }
@@ -114,7 +116,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private string _sizeIsTooBigLabel;
         public string SizeIsTooBigLabel
         {
             get { return _sizeIsTooBigLabel; }
@@ -124,9 +125,7 @@ namespace MvvmApp.ViewModels
                 RaisePropertyChangedEvent("SizeIsTooBigLabel");
             }
         }
-
-        private string _errorLabel;
-
+        
         public string ErrorLabel
         {
             get { return _errorLabel; }
@@ -137,7 +136,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private bool _isConvertEnabled;
         public bool IsConvertEnabled
         {
             get { return _isConvertEnabled; }
@@ -148,7 +146,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private bool _isSaveEnabled;
         public bool IsSaveEnabled
         {
             get { return _isSaveEnabled; }
@@ -165,7 +162,6 @@ namespace MvvmApp.ViewModels
             RaisePropertyChangedEvent(name);
         }
 
-        private bool _convertNormally;
         public bool ConvertNormally
         {
             get { return _convertNormally; }
@@ -176,7 +172,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private bool _convertAsynchronously;
         public bool ConvertAsynchronously
         {
             get { return _convertAsynchronously; }
@@ -187,7 +182,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private bool _convertUsingCpp;
         public bool ConvertUsingCpp
         {
             get { return _convertUsingCpp; }
@@ -198,7 +192,6 @@ namespace MvvmApp.ViewModels
             }
         }
 
-        private List<ConvertMode> _convertOpitons;
         public List<ConvertMode> ConvertOpitons
         {
             get => new List<ConvertMode>()
@@ -210,7 +203,6 @@ namespace MvvmApp.ViewModels
             set => _convertOpitons = value;
         }
 
-        private ConvertMode _selectedConverOption = ConvertMode.Normally;
         public ConvertMode SelectedConvertOption
         {
             get => _selectedConverOption;
@@ -222,6 +214,18 @@ namespace MvvmApp.ViewModels
         }
 
         #endregion
+
+        #region Constructor
+
+        public MainWindowViewModel(IFileService fileDialogService, IProcessing processing)
+        {
+            _fileDialogService = fileDialogService;
+            _processing = processing;
+        }
+
+        #endregion
+
+        #region Methods
 
         public void Load()
         {
@@ -319,5 +323,7 @@ namespace MvvmApp.ViewModels
                 return;
             _fileDialogService.SaveDialog(NewImage, OrgFilePath);
         }
+
+        #endregion
     }
 }

@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
 namespace MvvmApp.ViewModels
 {
-	public class ImageConverter : IValueConverter
+    public class ImageConverter : IValueConverter
 	{
-		public object Convert(
+        #region Methods
+
+        public object Convert(
 			object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			return new BitmapImage(new Uri(value.ToString()));
@@ -22,5 +20,7 @@ namespace MvvmApp.ViewModels
 		{
 			throw new NotSupportedException();
 		}
-	}
+
+        #endregion
+    }
 }

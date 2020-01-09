@@ -16,11 +16,15 @@ namespace AppTests
     [TestFixture]
     public class ShowLabelsMethodTests
     {
+        #region Fields
+
         MainWindowViewModel mainWindowViewModel;
         BitmapImage loadImage;
         WriteableBitmap newImage;
         Mock<IFileService> fileServiceMock;
         Mock<IProcessing> processingMock;
+
+        #endregion
 
         #region Helpers
 
@@ -48,6 +52,8 @@ namespace AppTests
 
         #endregion
 
+        #region SetUp
+
         [SetUp]
         public void SetUp()
         {
@@ -58,6 +64,10 @@ namespace AppTests
             loadImage = CreateBitmapImage();
             processingMock.Setup(m => m.CreateNewConvertedImage(mainWindowViewModel.OrgImage, mainWindowViewModel.SelectedConvertOption)).Returns(Task.FromResult(newImage));
         }
+
+        #endregion
+
+        #region Tests
 
         [Test]
         public void ShowLabels_NewImageLabelChanged()
@@ -88,5 +98,7 @@ namespace AppTests
 
             Assert.That(mainWindowViewModel.IsSaveEnabled);
         }
+
+        #endregion
     }
 }

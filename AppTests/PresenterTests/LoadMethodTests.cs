@@ -11,10 +11,16 @@ namespace AppTests
     [TestFixture]
     public class LoadMethodTests
     {
+        #region Fields
+
         MainWindowViewModel mainWindowViewModel;
         string filePath;
         Mock<IFileService> fileServiceMock;
         Mock<IProcessing> processingMock;
+
+        #endregion
+
+        #region SetUp
 
         [SetUp]
         public void SetUp()
@@ -25,6 +31,10 @@ namespace AppTests
             filePath = "some Path";
             fileServiceMock.Setup(m => m.TryOpenDialog(out filePath)).Returns(true);
         }
+
+        #endregion
+
+        #region Tests
 
         [Test]
         public void Load_ConvertingTimeLabelChanged()
@@ -115,5 +125,7 @@ namespace AppTests
 
             Assert.That(mainWindowViewModel.IsSaveEnabled, Is.False);
         }
+
+        #endregion
     }
 }
