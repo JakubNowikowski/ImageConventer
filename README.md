@@ -1,6 +1,6 @@
 # ImageConventer
 
-WPF aplication desinged in MVVM pattern which allows user to load image (.jpb, .bmp or .png) and convert it using algorithm which selects main color (highest value out of Red/Green/Blue) from each pixel. 
+WPF aplication desinged in MVVM pattern which allows user to load image (.jpg, .bmp or .png) and convert it using algorithm which selects main color (highest value out of Red/Green/Blue) from each pixel. 
 
 Application provides three options to accomplish this task:
 
